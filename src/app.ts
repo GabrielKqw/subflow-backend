@@ -5,6 +5,7 @@ import compression from 'compression';
 import { errorHandler } from './shared/middlewares/error-handler';
 import { logger } from './shared/config/logger';
 import authRoutes from './modules/auth/auth.routes';
+import plansRoutes from './modules/plans/plans.routes';
 
 const app: Application = express();
 
@@ -34,6 +35,7 @@ app.get('/health', (req, res) => {
 const API_PREFIX = process.env.API_PREFIX || '/api';
 
 app.use(`${API_PREFIX}/auth`, authRoutes);
+app.use(`${API_PREFIX}/plans`, plansRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

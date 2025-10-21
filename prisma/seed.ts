@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting seed...');
+  console.log('Starting seed...');
 
   const hashedPassword = await bcrypt.hash('Admin@123', 10);
 
@@ -19,7 +19,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Admin user created:', admin.email);
+  console.log('Admin user created:', admin.email);
 
   const plans = await Promise.all([
     prisma.plan.upsert({
@@ -27,11 +27,11 @@ async function main() {
       update: {},
       create: {
         id: '1',
-        name: 'Básico',
-        description: 'Plano básico mensal',
+        name: 'Basic',
+        description: 'Basic monthly plan',
         price: 29.90,
         durationDays: 30,
-        features: ['Acesso básico', 'Suporte por email', '10 GB de armazenamento'],
+        features: ['Basic access', 'Email support', '10 GB storage'],
         isActive: true,
       },
     }),
@@ -41,14 +41,14 @@ async function main() {
       create: {
         id: '2',
         name: 'Premium',
-        description: 'Plano premium mensal',
+        description: 'Premium monthly plan',
         price: 59.90,
         durationDays: 30,
         features: [
-          'Acesso completo',
-          'Suporte prioritário',
-          '100 GB de armazenamento',
-          'Recursos avançados',
+          'Full access',
+          'Priority support',
+          '100 GB storage',
+          'Advanced features',
         ],
         isActive: true,
       },
@@ -58,30 +58,30 @@ async function main() {
       update: {},
       create: {
         id: '3',
-        name: 'Empresarial',
-        description: 'Plano empresarial anual',
+        name: 'Enterprise',
+        description: 'Enterprise annual plan',
         price: 599.90,
         durationDays: 365,
         features: [
-          'Acesso ilimitado',
-          'Suporte 24/7',
-          'Armazenamento ilimitado',
-          'Recursos empresariais',
-          'API dedicada',
+          'Unlimited access',
+          '24/7 support',
+          'Unlimited storage',
+          'Enterprise features',
+          'Dedicated API',
         ],
         isActive: true,
       },
     }),
   ]);
 
-  console.log('✅ Plans created:', plans.length);
+  console.log('Plans created:', plans.length);
 
-  console.log('🎉 Seed completed!');
+  console.log('Seed completed successfully');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

@@ -12,11 +12,11 @@ const redis = new Redis({
 });
 
 redis.on('connect', () => {
-  logger.info('✅ Redis connected successfully');
+  logger.info('Redis connected successfully');
 });
 
 redis.on('error', (error) => {
-  logger.error('❌ Redis connection error:', error);
+  logger.error('Redis connection error:', error);
 });
 
 process.on('beforeExit', () => {

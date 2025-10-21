@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createSubscriptionSchema = z.object({
-  planId: z.string().uuid('Invalid plan ID'),
+  planId: z.string().min(1, 'Plan ID is required'),
 });
 
 export const cancelSubscriptionSchema = z.object({

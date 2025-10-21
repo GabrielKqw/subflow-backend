@@ -9,11 +9,12 @@ Robust system to manage users, subscription plans, recurring billing and payment
 **Key Features:**
 - JWT authentication with refresh tokens
 - Multiple subscription plans
-- Automated recurring payments
-- Webhooks for gateway integrations (Stripe, Mercado Pago)
+- Payment processing (Credit Card, PIX, Boleto)
+- Automatic subscription activation on payment approval
+- Payment history and statistics
 - Role-based access control (admin/user)
-- Redis caching
-- Structured logging
+- Redis caching (optional for development)
+- Structured logging with Winston
 
 ## Tech Stack
 
@@ -49,16 +50,9 @@ docker-compose exec app npx prisma db seed
 ```bash
 npm install
 
-# Configure environment variables
-cat > .env << EOF
-NODE_ENV=development
-PORT=3000
-DATABASE_URL="postgresql://user:password@localhost:5432/subscription_db"
-JWT_SECRET=your-secret-key
-JWT_REFRESH_SECRET=your-refresh-secret
-REDIS_HOST=localhost
-REDIS_PORT=6379
-EOF
+# Copy environment variables template
+cp env.example .env
+# Edit .env with your credentials
 
 # Database setup
 npx prisma migrate dev
@@ -76,12 +70,15 @@ API available at `http://localhost:3000`
 ```
 src/
 ├── modules/              # Business modules
-│   └── auth/            # Authentication and authorization
+│   ├── auth/            # Authentication and authorization
+│   ├── plans/           # Subscription plans management
+│   ├── subscriptions/   # User subscriptions
+│   └── payments/        # Payment processing
 ├── shared/
 │   ├── config/          # Configurations (DB, Redis, Logger)
-│   ├── middlewares/     # Global middlewares
+│   ├── middlewares/     # Global middlewares (auth, error handler)
 │   ├── errors/          # Custom error classes
-│   └── utils/           # Utilities (JWT, Hash, Validators)
+│   └── utils/           # Utilities (JWT, Hash, Validators, Date)
 └── server.ts            # Entry point
 ```
 
@@ -120,19 +117,20 @@ DELETE /api/subscriptions/:id  # Cancel subscription
 
 ### Payments
 ```
-POST   /api/payments/initiate  # Initiate payment process
-GET    /api/payments/history   # Payment history
-```
-
-### Webhooks
-```
-POST   /api/webhooks/payment   # Receive payment notifications
+POST   /api/payments/initiate         # Initiate payment process
+GET    /api/payments/history          # User payment history
+GET    /api/payments/:id              # Get payment details
+GET    /api/payments                  # List all payments (admin)
+GET    /api/payments?status=PENDING   # Filter by status (admin)
+PATCH  /api/payments/:id/status       # Update payment status (admin)
+GET    /api/payments/admin/stats      # Payment statistics (admin)
 ```
 
 ### Admin
 ```
-GET    /api/admin/users        # List all users
-GET    /api/admin/logs         # System activity logs
+GET    /api/subscriptions             # List all subscriptions
+GET    /api/subscriptions/:id         # Get subscription details
+PATCH  /api/subscriptions/:id/status  # Update subscription status
 ```
 
 ## Data Models
@@ -233,10 +231,6 @@ make docker-logs      # View logs
 # See all commands
 make help
 ```
-
-## Additional Documentation
-
-- [TESTING.md](TESTING.md) - API usage examples
 
 ## License
 

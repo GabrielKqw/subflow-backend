@@ -51,7 +51,9 @@ export class AuthService {
       role: user.role,
     });
 
-    await redis.set(`refresh:${user.id}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
+    if (redis) {
+      await redis.set(`refresh:${user.id}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
+    }
 
     const { password: _, ...userWithoutPassword } = user;
 
@@ -91,7 +93,9 @@ export class AuthService {
       role: user.role,
     });
 
-    await redis.set(`refresh:${user.id}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
+    if (redis) {
+      await redis.set(`refresh:${user.id}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
+    }
 
     const { password: _, ...userWithoutPassword } = user;
 
@@ -109,10 +113,12 @@ export class AuthService {
     try {
       const decoded = verifyRefreshToken(token);
 
-      const storedToken = await redis.get(`refresh:${decoded.userId}`);
+      if (redis) {
+        const storedToken = await redis.get(`refresh:${decoded.userId}`);
 
-      if (!storedToken || storedToken !== token) {
-        throw new UnauthorizedError('Invalid refresh token');
+        if (!storedToken || storedToken !== token) {
+          throw new UnauthorizedError('Invalid refresh token');
+        }
       }
 
       const user = await this.authRepository.findById(decoded.userId);
@@ -133,12 +139,14 @@ export class AuthService {
         role: user.role,
       });
 
-      await redis.set(
-        `refresh:${user.id}`,
-        newRefreshToken,
-        'EX',
-        60 * 60 * 24 * 7
-      );
+      if (redis) {
+        await redis.set(
+          `refresh:${user.id}`,
+          newRefreshToken,
+          'EX',
+          60 * 60 * 24 * 7
+        );
+      }
 
       return {
         accessToken,
@@ -150,7 +158,9 @@ export class AuthService {
   }
 
   async logout(userId: string): Promise<void> {
-    await redis.del(`refresh:${userId}`);
+    if (redis) {
+      await redis.del(`refresh:${userId}`);
+    }
   }
 }
 

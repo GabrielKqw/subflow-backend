@@ -1,0 +1,43 @@
+Desafio Técnico: Desenvolvimento de Backend Completo em 24 Horas
+
+Recentemente me propus um desafio técnico que simula pressão real de entrega: desenvolver um sistema backend completo de gerenciamento de assinaturas e pagamentos em até 24 horas.
+
+O objetivo foi além de apenas "fazer funcionar". Busquei aplicar padrões arquiteturais sólidos, código limpo e práticas que uso em ambientes de produção.
+
+DECISÕES TÉCNICAS:
+
+A stack escolhida foi Node.js com TypeScript em modo strict, garantindo type safety completo. Utilizei Express como framework web, Prisma ORM para abstração do PostgreSQL, e Redis para gerenciamento de sessões e cache.
+
+Para autenticação, implementei JWT com estratégia de access e refresh tokens, armazenando os refresh tokens no Redis com TTL de 7 dias. As senhas são hashadas com bcrypt usando 10 rounds de salt.
+
+A arquitetura segue Clean Architecture com separação clara entre Repository Pattern (acesso a dados), Service Pattern (regras de negócio) e Controllers (handlers HTTP). Todas as entradas são validadas com Zod antes de processar.
+
+INFRAESTRUTURA E QUALIDADE:
+
+O projeto está completamente dockerizado com Docker Compose orquestrando PostgreSQL, Redis e a aplicação. Implementei CI/CD com GitHub Actions executando linting, testes unitários e build verification em cada push.
+
+Os testes foram escritos com Jest, mockando dependências externas e focando em cobertura das regras de negócio críticas. Logs estruturados com Winston facilitam debugging e monitoramento.
+
+FUNCIONALIDADES ENTREGUES:
+
+Sistema completo de autenticação (registro, login, refresh token, logout)
+Schema de banco com 5 entidades relacionadas (User, Plan, Subscription, Payment, ActivityLog)
+Middleware de autorização com suporte a roles (admin/user)
+Estrutura preparada para webhooks de gateways de pagamento
+Error handling global com classes customizadas de erro
+Configuração pronta para deploy em Render, Railway ou Vercel
+
+O código está open-source e disponível no GitHub para review técnico.
+
+SOBRE OPORTUNIDADES:
+
+Estou aberto a projetos remotos como desenvolvedor backend ou fullstack, tanto em regime CLT quanto PJ. Tenho experiência com Node.js, TypeScript, arquitetura de microsserviços, APIs RESTful e bancos de dados relacionais e não-relacionais.
+
+Também disponível para projetos de suporte técnico.
+
+Se sua empresa busca profissionais que equilibram velocidade de entrega com qualidade técnica, ficarei feliz em conversar sobre como posso contribuir.
+
+Link do projeto: [COLOCAR LINK DO GITHUB AQUI]
+
+#BackendDevelopment #NodeJS #TypeScript #SoftwareArchitecture #CleanCode #RemoteWork #OpenToWork
+

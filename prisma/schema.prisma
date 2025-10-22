@@ -44,6 +44,7 @@ model User {
   
   subscriptions Subscription[]
   payments      Payment[]
+  activityLogs  ActivityLog[]
 
   @@map("users")
 }
@@ -103,12 +104,16 @@ model Payment {
 
 model ActivityLog {
   id          String   @id @default(uuid())
+  userId      String
   action      String
-  entity      String
-  entityId    String
-  userId      String?
-  metadata    Json?
+  resource    String
+  resourceId  String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
   createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("activity_logs")
 }

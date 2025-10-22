@@ -4,10 +4,13 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { errorHandler } from './shared/middlewares/error-handler';
 import { logger } from './shared/config/logger';
+import { apiLimiter } from './shared/middlewares/rate-limit.middleware';
 import authRoutes from './modules/auth/auth.routes';
 import plansRoutes from './modules/plans/plans.routes';
 import subscriptionsRoutes from './modules/subscriptions/subscriptions.routes';
 import paymentsRoutes from './modules/payments/payments.routes';
+import activityLogsRoutes from './modules/activity-logs/activity-logs.routes';
+import adminRoutes from './modules/admin/admin.routes';
 
 const app: Application = express();
 
@@ -20,6 +23,8 @@ app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(apiLimiter);
 
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.path}`);
@@ -40,6 +45,8 @@ app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/plans`, plansRoutes);
 app.use(`${API_PREFIX}/subscriptions`, subscriptionsRoutes);
 app.use(`${API_PREFIX}/payments`, paymentsRoutes);
+app.use(`${API_PREFIX}/activity-logs`, activityLogsRoutes);
+app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

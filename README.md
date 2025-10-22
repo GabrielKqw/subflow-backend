@@ -12,7 +12,10 @@ Robust system to manage users, subscription plans, recurring billing and payment
 - Payment processing (Credit Card, PIX, Boleto)
 - Automatic subscription activation on payment approval
 - Payment history and statistics
+- Admin dashboard with complete analytics
+- Activity logging and audit trail
 - Role-based access control (admin/user)
+- Rate limiting protection
 - Redis caching (optional for development)
 - Structured logging with Winston
 
@@ -73,10 +76,12 @@ src/
 │   ├── auth/            # Authentication and authorization
 │   ├── plans/           # Subscription plans management
 │   ├── subscriptions/   # User subscriptions
-│   └── payments/        # Payment processing
+│   ├── payments/        # Payment processing
+│   ├── activity-logs/   # Activity logging and audit
+│   └── admin/           # Admin dashboard and user management
 ├── shared/
 │   ├── config/          # Configurations (DB, Redis, Logger)
-│   ├── middlewares/     # Global middlewares (auth, error handler)
+│   ├── middlewares/     # Global middlewares (auth, rate limit, activity logger)
 │   ├── errors/          # Custom error classes
 │   └── utils/           # Utilities (JWT, Hash, Validators, Date)
 └── server.ts            # Entry point
@@ -128,9 +133,20 @@ GET    /api/payments/admin/stats      # Payment statistics (admin)
 
 ### Admin
 ```
-GET    /api/subscriptions             # List all subscriptions
-GET    /api/subscriptions/:id         # Get subscription details
-PATCH  /api/subscriptions/:id/status  # Update subscription status
+GET    /api/admin/dashboard           # Dashboard with statistics
+GET    /api/admin/users               # List all users
+GET    /api/admin/users/:id           # Get user details
+PATCH  /api/admin/users/:id           # Update user
+PATCH  /api/admin/users/:id/role      # Update user role
+DELETE /api/admin/users/:id           # Delete user
+```
+
+### Activity Logs
+```
+GET    /api/activity-logs/me          # My activity history
+GET    /api/activity-logs             # All activity logs (admin)
+GET    /api/activity-logs/:id         # Get log details (admin)
+POST   /api/activity-logs/cleanup     # Cleanup old logs (admin)
 ```
 
 ## Data Models
@@ -157,16 +173,22 @@ Transaction history.
 
 ### ActivityLog
 System action audit trail.
+- Automatic logging of critical actions
+- Tracks user, IP, user agent
+- Filterable by action, resource, date range
+- Automatic cleanup of old logs
 
 ## Security
 
 - Passwords encrypted with bcrypt (10 rounds)
 - Short-lived JWT tokens (15min access, 7 days refresh)
 - Refresh tokens stored in Redis
+- Rate limiting (100 req/15min general, 5 req/15min auth)
+- Activity logging for audit trail
 - Configurable CORS
 - Helmet for security headers
 - Strict input validation (Zod)
-- Rate limiting (planned)
+- Role-based access control
 
 ## Testing
 
